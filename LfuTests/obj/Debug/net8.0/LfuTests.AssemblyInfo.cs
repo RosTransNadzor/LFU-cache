@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LfuTests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9cc7153c8fd59aa764e9756558deb91e44f136c7")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3c098d312a65c8dd481047ccb0b2ce0411d18517")]
 [assembly: System.Reflection.AssemblyProductAttribute("LfuTests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LfuTests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

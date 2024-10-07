@@ -22,6 +22,12 @@ public class LinkedList<TValue>
 
         return length;
     }
+
+    public void Clear()
+    {
+        Head = null;
+        Tail = null;
+    }
     public void AddNodeToHead(Node<TValue> node)
     {
         var oldHead = Head;

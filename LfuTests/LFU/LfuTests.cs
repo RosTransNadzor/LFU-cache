@@ -11,10 +11,10 @@ public class LfuTests
         LFU<string, int> lfu = new(1);
         var key = "key";
         //Act
-        lfu.Insert(key,5);
+        lfu.Add(key,5);
         
         //Assert
-        Assert.Equal(1,lfu.Count);
+        Assert.Single(lfu);
 
         var frequency = new ValueFrequency<int>
         {
@@ -31,9 +31,9 @@ public class LfuTests
         LFU<string, int> lfu = new(1);
         var key = "key";
         //Act
-        lfu.Insert(key,5);
+        lfu.Add(key,5);
         //Assert
-        Assert.Throws<Exception>(() => lfu.Insert(key, 4));
+        Assert.Throws<Exception>(() => lfu.Add(key, 4));
     }
     [Fact]
     public void InsertWhenLfuIsFull()
@@ -43,8 +43,8 @@ public class LfuTests
         var key2 = "key2";
 
         //Act
-        lfu.Insert(key1,5);
-        lfu.Insert(key2,4);
+        lfu.Add(key1,5);
+        lfu.Add(key2,4);
         //Assert
         var frequency = new ValueFrequency<int>
         {
@@ -54,7 +54,7 @@ public class LfuTests
         
         Assert.Equal(frequency,lfu.GetWithFrequency(key2));
         Assert.Throws<Exception>(() => lfu.GetWithFrequency(key1));
-        Assert.Equal(1,lfu.Count);
+        Assert.Single(lfu);
     }
 
     [Fact]
@@ -64,11 +64,11 @@ public class LfuTests
         LFU<string, int> lfu = new(1);
         var key = "key";
         //Act
-        lfu.Insert(key,5);
+        lfu.Add(key,5);
         lfu.Access(key);
         
         //Assert
-        Assert.Equal(1,lfu.Count);
+        Assert.Single(lfu);
 
         var frequency = new ValueFrequency<int>
         {
@@ -88,10 +88,10 @@ public class LfuTests
         var key2 = "key2";
         var key3 = "key3";
         //Act
-        lfu.Insert(key1,1);
-        lfu.Insert(key2,2);
+        lfu.Add(key1,1);
+        lfu.Add(key2,2);
         lfu.Access(key2);
-        lfu.Insert(key3,3);
+        lfu.Add(key3,3);
         
         //Assert
         Assert.Throws<Exception>(() => lfu.GetWithFrequency(key1));
@@ -115,9 +115,9 @@ public class LfuTests
         var key3 = "key3";
         
         //Act
-        lfu.Insert(key1,1);
-        lfu.Insert(key2,2);
-        lfu.Insert(key3,3);
+        lfu.Add(key1,1);
+        lfu.Add(key2,2);
+        lfu.Add(key3,3);
         
         //Assert
         Assert.Throws<Exception>(() => lfu.GetWithFrequency(key1));
@@ -132,9 +132,9 @@ public class LfuTests
         var key3 = "key3";
         
         //Act
-        lfu.Insert(key1,1);
-        lfu.Insert(key2,2);
-        lfu.Insert(key3,3);
+        lfu.Add(key1,1);
+        lfu.Add(key2,2);
+        lfu.Add(key3,3);
         
         //Assert
         Assert.Throws<Exception>(() => lfu.GetWithFrequency(key2));
@@ -148,10 +148,10 @@ public class LfuTests
         var key1 = "key1";
         var key2 = "key2";
         //Act
-        lfu.Insert(key1,1);
+        lfu.Add(key1,1);
         lfu.Access(key1);
-        lfu.Insert(key2,2);
-        lfu.Delete(key1);
+        lfu.Add(key2,2);
+        lfu.Remove(key1);
         
         //Assert
         Assert.Throws<Exception>(() => lfu.GetWithFrequency(key1));

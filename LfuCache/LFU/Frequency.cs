@@ -10,7 +10,7 @@ public enum AddPolicy : byte
 /// </summary>
 /// <typeparam name="TValue">type of value in lfuItems</typeparam>
 /// <typeparam name="TKey">type of key in lfuItems</typeparam>
-public readonly struct Frequency<TValue,TKey>
+public readonly struct Frequency<TKey,TValue>
 {
     private readonly AddPolicy _addPolicy;
 
@@ -19,8 +19,8 @@ public readonly struct Frequency<TValue,TKey>
         _addPolicy = policy;
     }
     public required int Freq { get; init; }
-    public required LinkedList<LfuItem<TValue, TKey>> Items { get; init; }
-    public void AddItem(Node<LfuItem<TValue,TKey>> lfuItem)
+    public required LinkedList<LfuItem<TKey, TValue>> Items { get; init; }
+    public void AddItem(Node<LfuItem<TKey,TValue>> lfuItem)
     {
         if(_addPolicy == AddPolicy.AddToTail)
             Items.AddNodeToTail(lfuItem);

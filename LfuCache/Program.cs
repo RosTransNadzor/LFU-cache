@@ -1,10 +1,10 @@
-﻿using ConsoleTest.LFU;
+﻿namespace LfuCache;
 
-namespace LfuCache;
-
-class Program
+public static class Program
 {
-    static void Main(string[] args)
+    
+    public static void Main(string[] args)
     {
+        Console.ReadLine();
     }
 }
