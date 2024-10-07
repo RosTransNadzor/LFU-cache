@@ -1,58 +1,90 @@
 
-# LFU<TKey, TValue> Class Documentation
+# LFU Cache Implementation in C#
 
-## Overview
-The `LFU<TKey, TValue>` class implements a **Least Frequently Used (LFU)** cache, designed to manage items based on their access frequency. This means that items that are least frequently accessed are removed first when the cache reaches its maximum capacity. This class provides **O(1)** complexity for `Insert`, `Access`, and `Delete` operations by utilizing a combination of a **hash table** and a **doubly linked list**.
+This repository contains an implementation of the **Least Frequently Used (LFU)** cache algorithm in C#. The LFU cache is a data structure that stores a limited number of key-value pairs and removes the least frequently accessed items when it reaches its capacity.
 
-## Generic Parameters
-- **TKey**: Represents the type of keys used to index the cache. `TKey` must be non-nullable (`notnull` constraint).
-- **TValue**: Represents the type of values stored in the cache.
+## Key Features
+- **O(1) Time Complexity**: The implementation provides O(1) time complexity for the following operations:
+  - Insertion of key-value pairs.
+  - Accessing elements.
+  - Deletion of elements.
+- **Frequency-Based Eviction**: The cache automatically removes the least frequently accessed item when it reaches its size limit.
+- **Flexible Insertion Policy**: Users can specify how new items are added to the frequency list (e.g., add to the head or tail).
 
-## Constructor
+## Class Overview
+
+### `LFU<TKey, TValue>`
+
+A generic LFU cache class that supports keys of type `TKey` and values of type `TValue`. It provides methods for inserting, accessing, retrieving, and deleting items.
+
+### Type Parameters:
+- `TKey`: The type of keys used in the LFU cache. Must be non-nullable.
+- `TValue`: The type of values stored in the LFU cache.
+
+### Constructor:
 ```csharp
 public LFU(int lfuSize, AddPolicy policy = AddPolicy.AddToTail)
 ```
-### Parameters:
-- `lfuSize` (int): The maximum size of the cache. Must be greater than 0.
-- `policy` (AddPolicy): A strategy determining whether new items should be added to the tail (least priority) or head (most priority) of the cache. Default is `AddToTail`.
+- **lfuSize**: The maximum capacity of the cache.
+- **policy**: Optional parameter to specify how new items are added (either to the head or tail of the frequency list).
 
-## Key Methods
+## Public Methods
 
-### Insert(TKey key, TValue value)
+### `Insert(TKey key, TValue value)`
+Inserts a new key-value pair into the cache. If the cache is full, it removes the least frequently accessed item. Insertion is performed in **O(1)** time.
 ```csharp
 public void Insert(TKey key, TValue value)
 ```
-Inserts a new key-value pair into the cache. If the cache is full, the least frequently used item is evicted. The insertion is done in **O(1)** time by using a hash table for constant-time lookups and a doubly linked list for managing frequency nodes.
 
-### Access(TKey key)
+### `Access(TKey key)`
+Accesses the value associated with the given key and increases its frequency count. Returns the value in **O(1)** time.
 ```csharp
 public TValue Access(TKey key)
 ```
-Retrieves the value associated with the provided key and increments its frequency. If the key is not found, an exception is thrown. The operation runs in **O(1)** time.
 
-### Get(TKey key)
+### `Get(TKey key)`
+Returns the value associated with the given key without altering its frequency. Retrieval is done in **O(1)** time.
 ```csharp
 public TValue Get(TKey key)
 ```
-Returns the value associated with the provided key without changing its frequency. Throws an exception if the key does not exist. Runs in **O(1)** time.
 
-### GetWithFrequency(TKey key)
+### `GetWithFrequency(TKey key)`
+Returns both the value and the frequency of the specified key.
 ```csharp
 public ValueFrequency<TValue> GetWithFrequency(TKey key)
 ```
-Returns both the value and the current frequency of the key. The operation runs in **O(1)** time.
 
-### DeleteFirstItemWithMinFrequency()
+### `Delete(TKey key)`
+Removes the key-value pair from the cache. The operation is performed in **O(1)** time.
 ```csharp
-private TKey DeleteFirstItemWithMinFrequency()
+public void Delete(TKey key)
 ```
-Deletes the least frequently used item in the cache. It looks for the frequency node with the minimum frequency (always located at the head of the frequency list) and removes the item from it. Runs in **O(1)**.
 
-## Performance
-All primary operations, including inserting new items, accessing existing items, and removing the least frequently used items, run in **O(1)**. This is achieved by:
-- A hash table (`Dictionary<TKey, Node<LfuItem<TValue, TKey>>>`) for constant-time lookups and updates.
-- A doubly linked list (`LinkedList<Frequency<TValue, TKey>>`) for managing frequency buckets.
-- Efficient item frequency upgrades and evictions by moving items between frequency nodes in **O(1)**.
+## Example Usage
 
-## Conclusion
-This LFU cache is ideal for use cases where **frequent access patterns** are critical, and you need to ensure minimal time complexity for cache operations. With the right balance of hash tables and linked lists, the class maintains **O(1)** complexity for all fundamental operations.
+```csharp
+var lfuCache = new LFU<int, string>(capacity: 3);
+
+lfuCache.Insert(1, "A");
+lfuCache.Insert(2, "B");
+lfuCache.Insert(3, "C");
+
+// Access some items
+lfuCache.Access(1); // increases frequency of key 1
+lfuCache.Access(2); // increases frequency of key 2
+
+// Insert new item, key 3 will be removed as it is the least frequently used.
+lfuCache.Insert(4, "D");
+
+Console.WriteLine(lfuCache.Get(4)); // Output: "D"
+```
+
+## How It Works
+
+The LFU cache uses a **doubly linked list** to maintain frequency groups. Each group contains a list of items with the same frequency. The least frequently accessed item is stored in the head of the list and is removed when the cache exceeds its capacity.
+
+## Time Complexity
+All major operations (insert, access, get, delete) are performed in constant **O(1)** time.
+
+## License
+This project is licensed under the MIT License.

@@ -28,11 +28,12 @@ public class LFU<TKey,TValue>
     }
     
     /// <summary>
-    /// Insert item with key and value in LFU by 0(1)
+    /// Inserts an item into the LFU cache. If the cache has reached its capacity, the least frequently used item will be removed.
+    /// Insertion is performed in O(1) time.
     /// </summary>
-    /// <param name="key"></param>
-    /// <param name="value"></param>
-    /// <exception cref="Exception"></exception>
+    /// <param name="key">The key to insert into the cache.</param>
+    /// <param name="value">The value associated with the key.</param>
+    /// <exception cref="Exception">Throws an exception if the key already exists in the cache.</exception>
     public void Insert(TKey key,TValue value)
     {
         GuardKeyNotExits(key);
@@ -61,10 +62,12 @@ public class LFU<TKey,TValue>
     }
     
     /// <summary>
-    /// Get item by key and increase its frequency 
+    /// Accesses the item associated with the specified key, increasing its access frequency.
+    /// The operation is performed in O(1) time.
     /// </summary>
-    /// <param name="key">key in LFU</param>
-    /// <returns>value by key</returns>
+    /// <param name="key">The key to access in the cache.</param>
+    /// <returns>The value associated with the key.</returns>
+    /// <exception cref="Exception">Throws an exception if the key does not exist in the cache.</exception>
     public TValue Access(TKey key)
     {
         GuardKeyExists(key);
@@ -80,7 +83,13 @@ public class LFU<TKey,TValue>
 
         return lfuItem.Value;
     }
-    
+    /// <summary>
+    /// Retrieves the value associated with the specified key without changing its frequency.
+    /// The operation is performed in O(1) time.
+    /// </summary>
+    /// <param name="key">The key to retrieve from the cache.</param>
+    /// <returns>The value associated with the key.</returns>
+    /// <exception cref="Exception">Throws an exception if the key does not exist in the cache.</exception>
     public TValue Get(TKey key)
     {
         GuardKeyExists(key);
@@ -88,7 +97,13 @@ public class LFU<TKey,TValue>
         var lfuItem = _itemsHashTable[key].Value;
         return lfuItem.Value;
     }
-    
+    /// <summary>
+    /// Retrieves both the value and its access frequency associated with the specified key.
+    /// The operation is performed in O(1) time.
+    /// </summary>
+    /// <param name="key">The key to retrieve the value and frequency for.</param>
+    /// <returns>A struct containing the value and its access frequency.</returns>
+    /// <exception cref="Exception">Throws an exception if the key does not exist in the cache.</exception>
     public ValueFrequency<TValue> GetWithFrequency(TKey key)
     {
         GuardKeyExists(key);
@@ -100,7 +115,12 @@ public class LFU<TKey,TValue>
             Value = lfuItem.Value
         };
     }
-
+    /// <summary>
+    /// Deletes the item associated with the specified key from the cache. 
+    /// The operation is performed in O(1) time.
+    /// </summary>
+    /// <param name="key">The key to remove from the cache.</param>
+    /// <exception cref="Exception">Throws an exception if the key does not exist in the cache.</exception>
     public void Delete(TKey key)
     {
         GuardKeyExists(key);
