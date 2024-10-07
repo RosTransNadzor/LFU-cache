@@ -26,24 +26,6 @@ public class LFU<TKey,TValue>
         _addPolicy = policy;
         _itemsHashTable = new(_lfuSize);
     }
-
-    private void GuardSizeMoreZero(int size)
-    {
-        if (size <= 0)
-            throw new Exception("size not more than zero");
-    }
-
-    private void GuardKeyExists(TKey key)
-    {
-        if (!_itemsHashTable.ContainsKey(key))
-            throw new Exception("key doesn't exists");
-    }
-
-    private void GuardKeyNotExits(TKey key)
-    {
-        if (_itemsHashTable.ContainsKey(key))
-            throw new Exception("key already exists");
-    }
     
     /// <summary>
     /// Insert item with key and value in LFU by 0(1)
@@ -77,7 +59,76 @@ public class LFU<TKey,TValue>
         frequencyNode.Value.AddItem(item);
         _currentSize = Math.Min(_currentSize + 1, _lfuSize);
     }
+    
+    /// <summary>
+    /// Get item by key and increase its frequency 
+    /// </summary>
+    /// <param name="key">key in LFU</param>
+    /// <returns>value by key</returns>
+    public TValue Access(TKey key)
+    {
+        GuardKeyExists(key);
 
+        var node = _itemsHashTable[key];
+        var lfuItem = node.Value;
+       
+        var newNode = UpgradeItemFrequency(lfuItem);
+        DeleteLfuItemNode(node);
+
+        _itemsHashTable.Remove(key);
+        _itemsHashTable[key] = newNode;
+
+        return lfuItem.Value;
+    }
+    
+    public TValue Get(TKey key)
+    {
+        GuardKeyExists(key);
+
+        var lfuItem = _itemsHashTable[key].Value;
+        return lfuItem.Value;
+    }
+    
+    public ValueFrequency<TValue> GetWithFrequency(TKey key)
+    {
+        GuardKeyExists(key);
+
+        var lfuItem = _itemsHashTable[key].Value;
+        return new ValueFrequency<TValue>
+        {
+            Frequency = lfuItem.Frequency,
+            Value = lfuItem.Value
+        };
+    }
+
+    public void Delete(TKey key)
+    {
+        GuardKeyExists(key);
+
+        var lfuItemNode = _itemsHashTable[key];
+        _itemsHashTable.Remove(key);
+        DeleteLfuItemNode(lfuItemNode);
+        _currentSize--;
+    }
+
+    private void GuardSizeMoreZero(int size)
+    {
+        if (size <= 0)
+            throw new Exception("size not more than zero");
+    }
+
+    private void GuardKeyExists(TKey key)
+    {
+        if (!_itemsHashTable.ContainsKey(key))
+            throw new Exception("key doesn't exists");
+    }
+
+    private void GuardKeyNotExits(TKey key)
+    {
+        if (_itemsHashTable.ContainsKey(key))
+            throw new Exception("key already exists");
+    }
+    
     private Node<Frequency<TValue, TKey>> FindOrCreateFrequencyNode()
     {
         Node<Frequency<TValue, TKey>> result = FindFrequencyNode() ?? CreateFrequencyNode();
@@ -133,47 +184,6 @@ public class LFU<TKey,TValue>
         // no items with this frequency
         if(frequencyNode.Value.Items.Head is null)
             _frequencyList.RemoveNode(frequencyNode);
-    }
-    
-    /// <summary>
-    /// Get item by key and increase its frequency 
-    /// </summary>
-    /// <param name="key">key in LFU</param>
-    /// <returns>value by key</returns>
-    public TValue Access(TKey key)
-    {
-        GuardKeyExists(key);
-
-        var node = _itemsHashTable[key];
-        var lfuItem = node.Value;
-       
-        var newNode = UpgradeItemFrequency(lfuItem);
-        DeleteLfuItemNode(node);
-
-        _itemsHashTable.Remove(key);
-        _itemsHashTable[key] = newNode;
-
-        return lfuItem.Value;
-    }
-
-    public TValue Get(TKey key)
-    {
-        GuardKeyExists(key);
-
-        var lfuItem = _itemsHashTable[key].Value;
-        return lfuItem.Value;
-    }
-    
-    public ValueFrequency<TValue> GetWithFrequency(TKey key)
-    {
-        GuardKeyExists(key);
-
-        var lfuItem = _itemsHashTable[key].Value;
-        return new ValueFrequency<TValue>
-        {
-            Frequency = lfuItem.Frequency,
-            Value = lfuItem.Value
-        };
     }
 
     private Node<LfuItem<TValue,TKey>> UpgradeItemFrequency(LfuItem<TValue,TKey> lfuItem)

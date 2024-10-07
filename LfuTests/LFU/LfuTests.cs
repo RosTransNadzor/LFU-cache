@@ -105,9 +105,10 @@ public class LfuTests
     }
 
     [Fact]
-    public void RemoveLastAdded()
+    public void RemoveLastAddedByInsert()
     {
         //Arrange
+        //AddPolicy.AddToTail used by default
         LFU<string, int> lfu = new(2);
         var key1 = "key1";
         var key2 = "key2";
@@ -122,7 +123,7 @@ public class LfuTests
         Assert.Throws<Exception>(() => lfu.GetWithFrequency(key1));
     }
     [Fact]
-    public void RemoveFirstAdded()
+    public void RemoveFirstAddedByInsert()
     {
         //Arrange
         LFU<string, int> lfu = new(2,AddPolicy.AddToHead);
@@ -137,5 +138,22 @@ public class LfuTests
         
         //Assert
         Assert.Throws<Exception>(() => lfu.GetWithFrequency(key2));
+    }
+
+    [Fact]
+    public void DeleteItemFromCache()
+    {
+        //Assert
+        LFU<string, int> lfu = new(2);
+        var key1 = "key1";
+        var key2 = "key2";
+        //Act
+        lfu.Insert(key1,1);
+        lfu.Access(key1);
+        lfu.Insert(key2,2);
+        lfu.Delete(key1);
+        
+        //Assert
+        Assert.Throws<Exception>(() => lfu.GetWithFrequency(key1));
     }
 }

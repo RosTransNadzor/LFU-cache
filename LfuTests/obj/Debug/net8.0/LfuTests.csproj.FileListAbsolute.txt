@@ -108,3 +108,4 @@ F:\Rider\LfuCache\LfuTests\obj\Debug\net8.0\LfuTests.pdb
 F:\Rider\LfuCache\LfuTests\obj\Debug\net8.0\LfuTests.genruntimeconfig.cache
 F:\Rider\LfuCache\LfuTests\obj\Debug\net8.0\ref\LfuTests.dll
 F:\Rider\LfuCache\LfuTests\bin\Debug\net8.0\JetBrains.Annotations.dll
+F:\Rider\LfuCache\LfuTests\obj\Debug\net8.0\LfuTests.sourcelink.json
