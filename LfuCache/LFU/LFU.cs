@@ -1,10 +1,13 @@
 ﻿namespace ConsoleTest.LFU;
 
 /// <summary>
-/// 
+/// A class representing the Least Frequently Used (LFU) cache.
+/// This cache stores items with an associated frequency count, where items that are least frequently accessed
+/// are removed first when the cache reaches its capacity. The cache supports O(1) time complexity for 
+/// inserting, accessing, and deleting elements.
 /// </summary>
-/// <typeparam name="TKey">type of keys in lfu</typeparam>
-/// <typeparam name="TValue">type of values in lfu</typeparam>
+/// <typeparam name="TKey">The type of keys used in the LFU cache. Must be non-nullable.</typeparam>
+/// <typeparam name="TValue">The type of values stored in the LFU cache.</typeparam>
 public class LFU<TKey,TValue>
     where TKey : notnull
 {
