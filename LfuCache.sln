@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LfuCache", "LfuCache\LfuCache.csproj", "{326BD466-78CD-4B9E-8D97-FEF067F45B12}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LfuTests", "LfuTests\LfuTests.csproj", "{D2DCD4FD-1464-4480-BA02-5A95EC50C425}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{326BD466-78CD-4B9E-8D97-FEF067F45B12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{326BD466-78CD-4B9E-8D97-FEF067F45B12}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{326BD466-78CD-4B9E-8D97-FEF067F45B12}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{326BD466-78CD-4B9E-8D97-FEF067F45B12}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D2DCD4FD-1464-4480-BA02-5A95EC50C425}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2DCD4FD-1464-4480-BA02-5A95EC50C425}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2DCD4FD-1464-4480-BA02-5A95EC50C425}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2DCD4FD-1464-4480-BA02-5A95EC50C425}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,14 @@
+F:\Rider\LfuCache\LfuCache\bin\Debug\net8.0\LfuCache.exe
+F:\Rider\LfuCache\LfuCache\bin\Debug\net8.0\LfuCache.deps.json
+F:\Rider\LfuCache\LfuCache\bin\Debug\net8.0\LfuCache.runtimeconfig.json
+F:\Rider\LfuCache\LfuCache\bin\Debug\net8.0\LfuCache.dll
+F:\Rider\LfuCache\LfuCache\bin\Debug\net8.0\LfuCache.pdb
+F:\Rider\LfuCache\LfuCache\obj\Debug\net8.0\LfuCache.GeneratedMSBuildEditorConfig.editorconfig
+F:\Rider\LfuCache\LfuCache\obj\Debug\net8.0\LfuCache.AssemblyInfoInputs.cache
+F:\Rider\LfuCache\LfuCache\obj\Debug\net8.0\LfuCache.AssemblyInfo.cs
+F:\Rider\LfuCache\LfuCache\obj\Debug\net8.0\LfuCache.csproj.CoreCompileInputs.cache
+F:\Rider\LfuCache\LfuCache\obj\Debug\net8.0\LfuCache.dll
+F:\Rider\LfuCache\LfuCache\obj\Debug\net8.0\refint\LfuCache.dll
+F:\Rider\LfuCache\LfuCache\obj\Debug\net8.0\LfuCache.pdb
+F:\Rider\LfuCache\LfuCache\obj\Debug\net8.0\LfuCache.genruntimeconfig.cache
+F:\Rider\LfuCache\LfuCache\obj\Debug\net8.0\ref\LfuCache.dll
