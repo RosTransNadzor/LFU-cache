@@ -5,6 +5,7 @@
 /// This cache stores items with an associated frequency count, where items that are least frequently accessed
 /// are removed first when the cache reaches its capacity. The cache supports O(1) time complexity for 
 /// inserting, accessing, and deleting elements.
+/// See more http://dhruvbird.com/lfu.pdf
 /// </summary>
 /// <typeparam name="TKey">The type of keys used in the LFU cache. Must be non-nullable.</typeparam>
 /// <typeparam name="TValue">The type of values stored in the LFU cache.</typeparam>
@@ -35,17 +36,12 @@ public partial class LFU<TKey,TValue>
     /// <param name="key">The key to insert into the cache.</param>
     /// <param name="value">The value associated with the key.</param>
     /// <exception cref="Exception">Throws an exception if the key already exists in the cache.</exception>
-    private void Insert(TKey key,TValue value)
+    public void Insert(TKey key,TValue value)
     {
         GuardKeyNotExits(key);
-        
-        if (_currentSize == _lfuSize)
-        {
-            var deletedKey = DeleteFirstItemWithMinFrequency();
-            _itemsHashTable.Remove(deletedKey);
-        }
-        
-        Node<Frequency<TKey, TValue>> frequencyNode = FindOrCreateFrequencyNode();
+
+        Node<LfuItem<TKey, TValue>> node;
+        Node<Frequency<TKey, TValue>> frequencyNode = FindDefaultFrequencyNode();
         
         LfuItem<TKey,TValue> item = new()
         {
@@ -54,11 +50,22 @@ public partial class LFU<TKey,TValue>
             Key = key,
             Value = value
         };
-        
-        Node<LfuItem<TKey,TValue>> node = item;
-        
+
+        // we reuse old node to reduce allocations
+        if (_currentSize == _lfuSize)
+        {
+            node = Evict();
+            node.Value = item;
+        }
+        else
+        {
+            node = new Node<LfuItem<TKey, TValue>>
+            {
+                Value = item
+            };
+        }
         _itemsHashTable.Add(key,node);
-        frequencyNode.Value.AddItem(item);
+        frequencyNode.Value.AddItem(node);
         _currentSize = Math.Min(_currentSize + 1, _lfuSize);
     }
     
@@ -74,14 +81,14 @@ public partial class LFU<TKey,TValue>
         GuardKeyExists(key);
 
         var node = _itemsHashTable[key];
-        var lfuItem = node.Value;
-       
-        var newNode = UpgradeItemFrequency(lfuItem);
+        
         DeleteLfuItemNode(node);
-
+        UpgradeItemFrequency(node);
+        
         _itemsHashTable.Remove(key);
-        _itemsHashTable[key] = newNode;
+        _itemsHashTable[key] = node;
 
+        var lfuItem = node.Value;
         return lfuItem.Value;
     }
     /// <summary>
@@ -91,7 +98,7 @@ public partial class LFU<TKey,TValue>
     /// <param name="key">The key to retrieve from the cache.</param>
     /// <returns>The value associated with the key.</returns>
     /// <exception cref="Exception">Throws an exception if the key does not exist in the cache.</exception>
-    private TValue? Get(TKey key)
+    public TValue? Get(TKey key)
     {
         if (!_itemsHashTable.ContainsKey(key))
             return default;
@@ -141,54 +148,41 @@ public partial class LFU<TKey,TValue>
     private void GuardSizeMoreZero(int size)
     {
         if (size <= 0)
-            throw new Exception("size not more than zero");
+            throw new ArgumentOutOfRangeException($"size ({size})  must be more zero");
     }
 
     private void GuardKeyExists(TKey key)
     {
         if (!_itemsHashTable.ContainsKey(key))
-            throw new Exception("key doesn't exists");
+            throw new ArgumentException($"value with key {key} doesn't exists");
     }
 
     private void GuardKeyNotExits(TKey key)
     {
         if (_itemsHashTable.ContainsKey(key))
-            throw new Exception($"key already exists {key} - {_itemsHashTable[key]}");
+            throw new ArgumentException($"key already exists {key}");
     }
     
-    private Node<Frequency<TKey,TValue>> FindOrCreateFrequencyNode()
+    private Node<Frequency<TKey,TValue>> FindDefaultFrequencyNode()
     {
-        Node<Frequency<TKey,TValue>> result = FindFrequencyNode() ?? CreateFrequencyNode();
-        return result;
-    }
-
-    /// <summary>
-    /// Create Frequency node with 1 frequency and set as head in <see cref="_frequencyList"/>
-    /// </summary>
-    /// <returns></returns>
-    private Node<Frequency<TKey,TValue>> CreateFrequencyNode()
-    {
-        Node<Frequency<TKey,TValue>> frequencyNode = new Frequency<TKey,TValue>(_addPolicy)
+        var head = _frequencyList.Head;
+        if (head is { Value.Freq: DefaultFrequency })
+            return head;
+        
+        var frequency = new Frequency<TKey,TValue>(_addPolicy)
         {
             Freq = DefaultFrequency,
             Items = new()
         };
+        Node<Frequency<TKey, TValue>> defaultNode = new Node<Frequency<TKey, TValue>>
+        {
+            Value = frequency
+        };
         
-        _frequencyList.AddNodeToHead(frequencyNode);
-        return frequencyNode;
+        _frequencyList.AddNodeToHead(defaultNode);
+        return defaultNode;
     }
-
-    /// <summary>
-    /// Find frequency node with 1 frequency
-    /// </summary>
-    /// <returns></returns>
-    private Node<Frequency<TKey,TValue>>? FindFrequencyNode()
-    {
-        var head = _frequencyList.Head;
-        return head is { Value.Freq: DefaultFrequency } ? head : null;
-    }
-    
-    private TKey DeleteFirstItemWithMinFrequency()
+    private Node<LfuItem<TKey,TValue>> Evict()
     {
         // ! - almost one frequency node exists in list 
         // because lfuSize > 0
@@ -199,7 +193,10 @@ public partial class LFU<TKey,TValue>
         
         DeleteLfuItemNode(firstLfuItemWithMinFrequency);
 
-        return firstLfuItemWithMinFrequency.Value.Key;
+        var deletedKey =  firstLfuItemWithMinFrequency.Value.Key;
+        _itemsHashTable.Remove(deletedKey);
+
+        return firstLfuItemWithMinFrequency;
     }
 
     private void DeleteLfuItemNode(Node<LfuItem<TKey,TValue>> node)
@@ -213,32 +210,52 @@ public partial class LFU<TKey,TValue>
             _frequencyList.RemoveNode(frequencyNode);
     }
 
-    private Node<LfuItem<TKey,TValue>> UpgradeItemFrequency(LfuItem<TKey,TValue> lfuItem)
+    private void UpgradeItemFrequency(Node<LfuItem<TKey,TValue>> node)
     {
+        var lfuItem = node.Value;
         var frequencyNode = lfuItem.FrequencyNode;
-        Node<Frequency<TKey,TValue>> newFrequencyNode;
+        
+        Node<Frequency<TKey,TValue>> nextFrequencyNode = FindNextFrequency(frequencyNode);
         // increase item's frequency
-        var next = frequencyNode.Next;
-        if (next is not null && next.Value.Freq == frequencyNode.Value.Freq + 1)
-            newFrequencyNode = next;
-        else
-            newFrequencyNode = new Frequency<TKey,TValue>(_addPolicy)
-            {
-                Freq = lfuItem.Frequency + 1,
-                Items = new()
-            };
+        var newItem = lfuItem.UpgradeFrequency(nextFrequencyNode);
         
-        var newItem = lfuItem.UpgradeFrequency(newFrequencyNode);
+        node.Value = newItem;
+        nextFrequencyNode.Value.AddItem(node);
         
-        var newNode = new Node<LfuItem<TKey,TValue>>
-        {
-            Value = newItem
-        };
-        newFrequencyNode.Value.AddItem(newNode);
-        
-        if(newFrequencyNode != next)
-            _frequencyList.AddNodeAfter(frequencyNode,newFrequencyNode);
+        if(nextFrequencyNode != frequencyNode.Next)
+            _frequencyList.AddNodeAfter(frequencyNode,nextFrequencyNode);
+    }
 
-        return newNode;
+    /// <summary>
+    /// Finds node that has frequency = old node's frequency + 1
+    /// </summary>
+    /// <param name="node">node with old frequency</param>
+    /// <returns></returns>
+    private Node<Frequency<TKey, TValue>> FindNextFrequency(Node<Frequency<TKey, TValue>> node)
+    {
+        Node<Frequency<TKey, TValue>> result;
+
+        if (node.Next is not null && node.Next.Value.Freq == node.Value.Freq + 1)
+            result = node.Next;
+        
+        // we reuse node with frequency with 0 items
+        else if (node.Value.Freq != DefaultFrequency && node.Value.Items.Length == 0)
+        {
+            node.Value = node.Value with { Freq = node.Value.Freq + 1 };
+            result = node;
+        }
+        else
+        {
+            result = new()
+            {
+                Value = new Frequency<TKey, TValue>(_addPolicy)
+                {
+                    Freq = node.Value.Freq + 1,
+                    Items = new()
+                } 
+            };
+        }
+
+        return result;
     }
 }

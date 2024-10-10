@@ -8,25 +8,14 @@ public class LinkedList<TValue>
 {
     public Node<TValue>? Head { get; set; }
     public Node<TValue>? Tail { get; set; }
-    public int Length => GetLength();
-
-    private int GetLength()
-    {
-        int length = 0;
-        var current = Head;
-        while (current is not null)
-        {
-            current = current.Next;
-            length++;
-        }
-
-        return length;
-    }
+    public int Length => _length;
+    private int _length;
 
     public void Clear()
     {
         Head = null;
         Tail = null;
+        _length = 0;
     }
     public void AddNodeToHead(Node<TValue> node)
     {
@@ -39,6 +28,8 @@ public class LinkedList<TValue>
             oldHead.Prev = node;
             node.Next = oldHead;
         }
+
+        _length++;
     }
     public void AddNodeToTail(Node<TValue> node)
     {
@@ -54,6 +45,8 @@ public class LinkedList<TValue>
             node.Prev = Tail;
             Tail = node;
         }
+
+        _length++;
     }
 
     public void AddNodeAfter(Node<TValue> beforeNode, Node<TValue> newNode)
@@ -66,6 +59,8 @@ public class LinkedList<TValue>
             beforeNext.Prev = newNode;
         if (ReferenceEquals(Tail, beforeNode))
             Tail = newNode;
+        // we don't check is beforeNode part of current linked list
+        _length++;
     }
     public void RemoveNode(Node<TValue> node)
     {
@@ -81,6 +76,7 @@ public class LinkedList<TValue>
 
         // update head and tail 
         UpdateHeadAndTail(node);
+        _length--;
     }
 
     private void UpdateHeadAndTail(Node<TValue> node)

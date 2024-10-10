@@ -4,14 +4,14 @@
     "F:\\Rider\\LfuCache\\LfuTests\\LfuTests.csproj": {}
   },
   "projects": {
-    "F:\\Rider\\LfuCache\\LfuCache\\LfuCache.csproj": {
+    "F:\\Rider\\LfuCache\\LfuCore\\LfuCore.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "F:\\Rider\\LfuCache\\LfuCache\\LfuCache.csproj",
-        "projectName": "LfuCache",
-        "projectPath": "F:\\Rider\\LfuCache\\LfuCache\\LfuCache.csproj",
+        "projectUniqueName": "F:\\Rider\\LfuCache\\LfuCore\\LfuCore.csproj",
+        "projectName": "LfuCore",
+        "projectPath": "F:\\Rider\\LfuCache\\LfuCore\\LfuCore.csproj",
         "packagesPath": "C:\\Users\\Марина\\.nuget\\packages\\",
-        "outputPath": "F:\\Rider\\LfuCache\\LfuCache\\obj\\",
+        "outputPath": "F:\\Rider\\LfuCache\\LfuCore\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Марина\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -37,12 +37,6 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
-          "dependencies": {
-            "BenchmarkDotNet": {
-              "target": "Package",
-              "version": "[0.14.0, )"
-            }
-          },
           "imports": [
             "net461",
             "net462",
@@ -85,8 +79,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "F:\\Rider\\LfuCache\\LfuCache\\LfuCache.csproj": {
-                "projectPath": "F:\\Rider\\LfuCache\\LfuCache\\LfuCache.csproj"
+              "F:\\Rider\\LfuCache\\LfuCore\\LfuCore.csproj": {
+                "projectPath": "F:\\Rider\\LfuCache\\LfuCore\\LfuCore.csproj"
               }
             }
           }

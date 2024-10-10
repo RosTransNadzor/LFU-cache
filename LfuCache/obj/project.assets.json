@@ -658,6 +658,16 @@
         "runtime": {
           "lib/netcoreapp2.1/_._": {}
         }
+      },
+      "LfuCore/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/LfuCore.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/LfuCore.dll": {}
+        }
       }
     }
   },
@@ -1720,11 +1730,17 @@
         "useSharedDesignerContext.txt",
         "version.txt"
       ]
+    },
+    "LfuCore/1.0.0": {
+      "type": "project",
+      "path": "../LfuCore/LfuCore.csproj",
+      "msbuildProject": "../LfuCore/LfuCore.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net8.0": [
-      "BenchmarkDotNet >= 0.14.0"
+      "BenchmarkDotNet >= 0.14.0",
+      "LfuCore >= 1.0.0"
     ]
   },
   "packageFolders": {
@@ -1751,7 +1767,11 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "F:\\Rider\\LfuCache\\LfuCore\\LfuCore.csproj": {
+              "projectPath": "F:\\Rider\\LfuCache\\LfuCore\\LfuCore.csproj"
+            }
+          }
         }
       },
       "warningProperties": {

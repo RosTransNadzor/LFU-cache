@@ -33,7 +33,7 @@ public class LfuTests
         //Act
         lfu.Add(key,5);
         //Assert
-        Assert.Throws<Exception>(() => lfu.Add(key, 4));
+        Assert.Throws<ArgumentException>(() => lfu.Add(key, 4));
     }
     [Fact]
     public void InsertWhenLfuIsFull()
@@ -53,12 +53,12 @@ public class LfuTests
         };
         
         Assert.Equal(frequency,lfu.GetWithFrequency(key2));
-        Assert.Throws<Exception>(() => lfu.GetWithFrequency(key1));
+        Assert.Throws<ArgumentException>(() => lfu.GetWithFrequency(key1));
         Assert.Single(lfu);
     }
 
     [Fact]
-    public void AccessUpdateFrequency()
+    public void AccessUpdatesFrequency()
     {
         //Arrange
         LFU<string, int> lfu = new(1);
@@ -90,18 +90,18 @@ public class LfuTests
         //Act
         lfu.Add(key1,1);
         lfu.Add(key2,2);
-        lfu.Access(key2);
+        lfu.Access(key1);
         lfu.Add(key3,3);
         
         //Assert
-        Assert.Throws<Exception>(() => lfu.GetWithFrequency(key1));
+        Assert.Throws<ArgumentException>(() => lfu.GetWithFrequency(key2));
         var frequency = new ValueFrequency<int>
         {
             Frequency = 2,
-            Value = 2
+            Value = 1
         };
         
-        Assert.Equal(frequency,lfu.GetWithFrequency(key2));
+        Assert.Equal(frequency,lfu.GetWithFrequency(key1));
     }
 
     [Fact]
@@ -120,7 +120,7 @@ public class LfuTests
         lfu.Add(key3,3);
         
         //Assert
-        Assert.Throws<Exception>(() => lfu.GetWithFrequency(key1));
+        Assert.Throws<ArgumentException>(() => lfu.GetWithFrequency(key1));
     }
     [Fact]
     public void RemoveFirstAddedByInsert()
@@ -137,7 +137,7 @@ public class LfuTests
         lfu.Add(key3,3);
         
         //Assert
-        Assert.Throws<Exception>(() => lfu.GetWithFrequency(key2));
+        Assert.Throws<ArgumentException>(() => lfu.GetWithFrequency(key2));
     }
 
     [Fact]
@@ -154,6 +154,6 @@ public class LfuTests
         lfu.Remove(key1);
         
         //Assert
-        Assert.Throws<Exception>(() => lfu.GetWithFrequency(key1));
+        Assert.Throws<ArgumentException>(() => lfu.GetWithFrequency(key1));
     }
 }

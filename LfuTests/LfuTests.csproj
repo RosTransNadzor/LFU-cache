@@ -23,7 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\LfuCache\LfuCache.csproj" />
+      <ProjectReference Include="..\LfuCore\LfuCore.csproj" />
     </ItemGroup>
 
 </Project>
